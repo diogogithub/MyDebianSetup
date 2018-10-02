@@ -1,0 +1,37 @@
+# Pretty csv viewer
+function pretty_csv {
+        column -t -s, -n "$@" | less -F -S -X -K
+}
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some ls aliases
+alias la='ls -A'
+alias l='ls -CF'
+
+# better less
+alias less="less -R "
+
+alias php="php -c ~/workspace/php.ini"
+
+# Alternative system beep for (not only) when the system has no internal beep
+export BEEP=/usr/share/sounds/freedesktop/stereo/bell.oga
+alias beep='paplay $BEEP --volume=32768'
+
+### Extra aliases added after default:
+
+# Cheat code indent
+stylefix ()
+{
+        for file in $@
+        do
+                indent -linux -l80 -nbad -bap -bc -bbo -bl -bli0 -bls -ncdb -nce -cp1 -c33 -cs -di2 -ndj -nfc1 -nfca -hnl -i8 -ip5 -lp -pcs -psl -nsc -nsob -nut "$PWD/$file"
+                rm "$PWD/$file~"
+        done
+}
+alias stylefix=stylefix;
+alias pkgin='sudo aptitude install'
+alias pkgrm='sudo aptitude remove'
+alias wttr='curl http://wttr.in/Porto,Portugal'
+alias top='htop'

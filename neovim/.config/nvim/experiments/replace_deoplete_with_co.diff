@@ -1,0 +1,257 @@
+diff --git a/neovim/.config/nvim/rc.d/00-plugins.vim b/neovim/.config/nvim/rc.d/00-plugins.vim
+index a66b51d..ba57bc6 100644
+--- a/neovim/.config/nvim/rc.d/00-plugins.vim
++++ b/neovim/.config/nvim/rc.d/00-plugins.vim
+@@ -87,7 +87,6 @@ Plug 'majutsushi/tagbar'
+ Plug 'liuchengxu/vista.vim'
+ Plug 'editorconfig/editorconfig-vim'
+ Plug 'vim-scripts/Shebang'
+-Plug 'w0rp/ale'
+ Plug 'sirver/ultisnips'
+ Plug 'honza/vim-snippets'
+ Plug 'Valloric/MatchTagAlways'
+@@ -152,7 +151,6 @@ Plug 'vim-scripts/po.vim--Jelenak'
+ 
+ " PHP Support
+ Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+-Plug 'kristijanhusak/deoplete-phpactor'
+ Plug 'vim-php/tagbar-phpctags.vim'
+ Plug 'tobyS/pdv'
+ Plug 'StanAngeloff/php.vim'
+@@ -191,6 +189,8 @@ Plug 'lumiliet/vim-twig', {'for': 'twig'}
+ 
+ " javascript plugins
+ Plug 'pangloss/vim-javascript'
++Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx', 'vue'], 'do': 'npm install'}
++
+ Plug 'leafgarland/typescript-vim'
+ 
+ " For react
+@@ -200,19 +200,12 @@ Plug 'mxw/vim-jsx'
+ Plug 'posva/vim-vue'
+ 
+ " Autocomplete
+-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+-Plug 'zchee/deoplete-clang'
+-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+-Plug 'wokalski/autocomplete-flow'
+-Plug 'sebastianmarkow/deoplete-rust'
+-Plug 'shougo/neoinclude.vim'
+-Plug 'zchee/deoplete-jedi'
+-Plug 'shougo/neco-vim'
++Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install()}}
++Plug 'neoclide/coc-neco'
+ Plug 'othree/csscomplete.vim'
+ Plug 'othree/html5.vim'
+ Plug 'othree/xml.vim'
+ Plug 'c9s/perlomni.vim'
+-Plug 'artur-shaik/vim-javacomplete2'
+ 
+ 
+ " CSV plugin
+diff --git a/neovim/.config/nvim/rc.d/20-ale.vim b/neovim/.config/nvim/rc.d/20-ale.vim
+deleted file mode 100644
+index d513954..0000000
+--- a/neovim/.config/nvim/rc.d/20-ale.vim
++++ /dev/null
+@@ -1,68 +0,0 @@
+-" ===================================================================
+-" ale (Asynchronous Lint Engine) settings
+-" ===================================================================
+-
+-" Syntax / File Support
+-"" Enable JSDoc syntax highlighting
+-let g:javascript_plugin_jsdoc = 1
+-
+-"" Add an error indicator to Ale
+-let g:ale_sign_column_always = 1
+-
+-function! LinterStatus() abort
+-  let l:counts = ale#statusline#Count(bufnr(''))
+-
+-  let l:all_errors = l:counts.error + l:counts.style_error
+-  let l:all_non_errors = l:counts.total - l:all_errors
+-
+-  return l:counts.total == 0 ? 'OK' : printf(
+-        \   '%dW %dE',
+-        \   all_non_errors,
+-        \   all_errors
+-        \)
+-endfunction
+-
+-set statusline=%{LinterStatus()}
+-
+-nmap <silent> <leader>e <Plug>(ale_next_wrap)
+-nmap <silent> <leader>q <Plug>(ale_previous_wrap)
+-
+-" Ale
+-let g:ale_lint_on_enter = 0
+-let g:ale_lint_on_text_changed = 'never'
+-let g:ale_echo_msg_error_str = 'E'
+-let g:ale_echo_msg_warning_str = 'W'
+-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+-let g:ale_open_list = 1
+-let g:ale_keep_list_window_open=0
+-let g:ale_set_quickfix=0
+-let g:ale_list_window_size = 5
+-let g:ale_linters = {'python': ['flake8']}
+-let g:ale_sign_error = '✖'
+-let g:ale_sign_warning = '⚠'
+-let g:ale_fixers = {
+-      \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+-      \}
+-" \ 'php': ['phpcbf', 'php_cs_fixer', 'remove_trailing_lines', 'trim_whitespace'],
+-let g:ale_fix_on_save = 1
+-
+-" Use system flake8
+-let g:ale_python_flake8_executable = '/usr/bin/flake8'
+-
+-" Append our Neovim virtualenv to the list of venvs ale searches for
+-" The search is performed from the buffer directory up, until a name match is
+-" found; our Neovim venv lives in ~/.nvim-venv
+-let g:ale_virtualenv_dir_names = ['.env', '.venv', 'env', 'virtualenv', 'venv', '.nvim-venv']
+-" Explicitly list linters we care about
+-let g:ale_linters = {'python': ['flake8', 'pylint']}
+-" Only show warnings and errors from pylint
+-let g:ale_python_pylint_options = '--disable C,R'
+-let g:ale_sign_warning = '→'
+-let g:ale_sign_error = '→'
+-
+-" PHP Support
+-let g:ale_php_phpcbf_standard='PSR2'
+-let g:ale_php_phpcs_standard='phpcs.xml.dist'
+-let g:ale_php_phpmd_ruleset='phpmd.xml'
+-
+-" vim:set et sw=2:
+diff --git a/neovim/.config/nvim/rc.d/20-coc.vim b/neovim/.config/nvim/rc.d/20-coc.vim
+new file mode 100644
+index 0000000..dfad4a0
+--- /dev/null
++++ b/neovim/.config/nvim/rc.d/20-coc.vim
+@@ -0,0 +1,57 @@
++" ==================================================
++" COC configuration and mapping
++" ==================================================
++
++" Use `lp` and `ln` for navigate diagnostics
++nmap <silent> <leader>lp <Plug>(coc-diagnostic-prev)
++nmap <silent> <leader>ln <Plug>(coc-diagnostic-next)
++
++" Remap keys for gotos
++nmap <silent> <leader>ld <Plug>(coc-definition)
++nmap <silent> <leader>lt <Plug>(coc-type-definition)
++nmap <silent> <leader>li <Plug>(coc-implementation)
++nmap <silent> <leader>lf <Plug>(coc-references)
++
++" Remap for rename current word
++nmap <leader>lr <Plug>(coc-rename)
++
++" Use K for show documentation in preview window
++nnoremap <silent> K :call <SID>show_documentation()<CR>
++
++function! s:show_documentation()
++  if &filetype == 'vim'
++    execute 'h '.expand('<cword>')
++  else
++    call CocAction('doHover')
++  endif
++endfunction
++
++" Coc extensions
++let g:coc_global_extensions = [
++      \ 'coc-json',
++      \ 'coc-css',
++      \ 'coc-tsserver',
++      \ 'coc-emoji',
++      \ 'coc-html',
++      \ 'coc-ultisnips',
++      \ 'coc-yaml',
++      \ 'coc-pairs',
++      \ 'coc-java',
++      \ 'coc-vimtex'
++      \]
++
++" \ 'coc-highlight',
++" \ 'coc-dictionary',
++" \ 'coc-syntax',
++
++" outliner
++let g:vista_default_executive = 'coc'
++let g:vista#renderer#enable_icon = 0
++" nnoremap <leader>o :Vista!!<CR>
++
++" Coc Pairs
++inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
++autocmd FileType tex let b:coc_pairs = [["$", "$"]]
++autocmd FileType markdown let b:coc_pairs_disabled = ['`']
++
++" vim:set et sw=2:
+diff --git a/neovim/.config/nvim/rc.d/20-deoplete.vim b/neovim/.config/nvim/rc.d/20-deoplete.vim
+deleted file mode 100644
+index 7138bab..0000000
+--- a/neovim/.config/nvim/rc.d/20-deoplete.vim
++++ /dev/null
+@@ -1,63 +0,0 @@
+-" ===================================================================
+-" Deoplete
+-" ===================================================================
+-
+-" Autocomplete
+-let g:deoplete#sources = {}
+-let g:deoplete#sources.php = ['omni', 'phpactor', 'ultisnips', 'buffer']
+-let g:deoplete#enable_at_startup = 1
+-let g:deoplete#sources#jedi#statement_length = 50
+-let g:deoplete#sources#jedi#enable_cache = 1
+-let g:deoplete#sources#jedi#show_docstring = 0
+-
+-" disable autocomplete
+-let g:deoplete#disable_auto_complete = 1
+-if has("gui_running")
+-  inoremap <silent><expr><C-Space> deoplete#mappings#manual_complete()
+-else
+-  inoremap <silent><expr><C-@> deoplete#mappings#manual_complete()
+-endif
+-
+-" deoplete + neosnippet + autopairs changes
+-let g:AutoPairsMapCR=0
+-let g:deoplete#auto_complete_start_length = 1
+-let g:deoplete#enable_at_startup = 1
+-let g:deoplete#enable_smart_case = 1
+-
+-"" Deoplete per-autocompleter settings
+-""" Clang
+-let g:deoplete#sources#clang#libclang_path = '/lib/libclang.so' " '/usr/lib/i386-linux-gnu/libclang-4.0.so.1'
+-let g:deoplete#sources#clang#clang_header = '/lib/clang/4.0.0/include' " '/usr/lib/llvm-4.0/lib/clang/4.0.0/include'
+-
+-""" TernJS
+-let g:tern_request_timeout = 1
+-" let g:tern_show_signature_in_pum = '0'
+-let g:deoplete#sources#ternjs#depths = 1
+-let g:deoplete#sources#ternjs#types = 1
+-let g:deoplete#sources#ternjs#docs = 1
+-let g:tern#command = ["tern"]
+-let g:tern#arguments = ["--persistent"]
+-
+-""" Java
+-autocmd FileType java setlocal omnifunc=javacomplete#Complete
+-
+-""" Omnifunctions
+-let g:deoplete#omni#functions = {}
+-
+-let g:EclimCompletionMethod = 'omnifunc'
+-let g:deoplete#omni#functions.java = 'eclim#java#complete#CodeComplete'
+-
+-let g:deoplete#omni#functions.javascript = [
+-      \ 'tern#Complete',
+-      \ 'autocomplete_flow#Complete',
+-      \ 'javascriptcomplete#CompleteJS'
+-      \]
+-let g:deoplete#omni#functions.css = 'csscomplete#CompleteCSS'
+-let g:deoplete#omni#functions.html = [
+-      \ 'htmlcomplete#CompleteTags',
+-      \ 'xmlcomplete#CompleteTags'
+-      \]
+-let g:deoplete#omni#functions.xml = 'xmlcomplete#CompleteTags'
+-let g:deoplete#omni#functions.perl = 'perlomni#PerlComplete'
+-
+-" vim:set et sw=2:

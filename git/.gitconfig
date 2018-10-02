@@ -1,0 +1,45 @@
+[user]
+	name = Diogo Peralta Cordeiro
+	email = mail@diogo.site
+[core]
+	editor = nvim
+	excludesfile = ~/.gitignore_global
+[credential]
+	helper = cache --timeout=3600
+[alias]
+	ctags = !.git/hooks/ctags
+[init]
+	templatedir = ~/.git_template
+[log]
+	decorate = short
+[color]
+	ui = true
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[pull]
+	rebase = true
+[push]
+	default = simple
+[alias]
+	fixup = "!sh -c '(git diff-files --quiet || (echo Unstaged changes, please commit or stash with --keep-index; exit 1)) && COMMIT=$(git rev-parse $1) && git commit --fixup=$COMMIT && git rebase -i --autosquash $COMMIT~1' -"
+	lg = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+# Clone git repos with URLs like "gh:alexpearce/dotfiles"
+[url "https://github.com/"]
+	insteadOf = "gh:"
+[url "git@github.com:"]
+	pushInsteadOf = "gh:"
+# Clone Arch User Repository repos with URLs like "aur:neomutt"
+[url "https://aur.archlinux.org/"]
+	insteadOf = "aur:"
+[merge]
+	tool = nvim
+[mergetool "nvim"]
+	cmd = nvim -f -c \"Gdiff\" \"$MERGED\"
+[rebase]
+	autosquash = true
+	instructionFormat = "(%an <%ae>) %s"
+[status]
+	showUntrackedFiles = all

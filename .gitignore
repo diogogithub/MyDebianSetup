@@ -1,0 +1,17 @@
+geany/
+geany/.config/geany/geany.conf
+geany/.config/geany/filedefs/filetypes.README
+geany/.config/geany/keybindings.conf
+geany/.config/geany/templates/templates.README
+
+tools/.bin/
+tools/.local/bin/virtualenv
+
+neovim/.config/nvim/env/
+
+composer/.config/composer/vendor/
+composer/.config/composer/.htaccess
+composer/.config/composer/composer.lock
+
+tools/.local/bin/hie*
+tools/.local/bin/yapf

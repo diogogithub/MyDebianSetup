@@ -1,0 +1,78 @@
+!!
+!! ~/.Xdefaults
+!!
+
+!!!!!!!!!!!!!!!!!!
+!! rxvt-unicode !!
+!!!!!!!!!!!!!!!!!!
+
+URxvt*font: xft:Inconsolata Nerd Font:style=Medium:size=14:pixelsize=16:antialias=true
+
+URxvt*intensityStyles: true
+URxvt*linespace: 0
+
+URxvt*geometry: 100x30
+URxvt*borderLess: false
+URxvt*externalBorder: 0
+URxvt*internalBorder: 0
+
+URxvt*scrollBar: false
+
+URxvt*cursorColor: #ffffff
+URxvt*cursorColor2: #000000
+URxvt*cursorBlink: false
+URxvt*reverseVideo: false
+
+URxvt*depth: 32
+
+URxvt.background: [85]#181815
+!URxvt*background: rgba:0031/0032/0034/ddee
+
+URxvt*pointerBlank: false
+URxvt*inheritPixmap: false
+
+URxvt*insecure: false
+URxvt*termName: rxvt-unicode
+URxvt*loginShell: true
+URxvt*hold: false
+URxvt*saveLines: 5000
+URxvt*jumpScroll: true
+URxvt*skipScroll: true
+URxvt*scrollTtyOutput: false
+URxvt*scrollWithBuffer: false
+URxvt*scrollTtyKeypress: true
+URxvt*mouseWheelScrollPage: false
+
+URxvt*tripleclickwords: true
+URxvt*cutchars: `'",;@&*=|?()<>[]{}
+URxvt*pastableTabs: false
+URxvt*mapAlert: false
+
+URxvt*urgentOnBell: false
+URxvt*visualBell: false
+URxvt*utmpInhibit: false
+
+!! Perl Extensions !!
+URxvt*perl-ext-common: default,tabbedex,resize-font
+
+URxvt.keysym.C-Down:     resize-font:smaller
+URxvt.keysym.C-Up:      resize-font:bigger
+URxvt.keysym.C-equal:     resize-font:reset
+URxvt.keysym.C-question:  resize-font:show
+
+URxvt*keysym.Control-Shift-N: perl:tabbedex:new_tab
+URxvt*keysym.Control-Shift-K: perl:tabbedex:next_tab
+URxvt*keysym.Control-Shift-J: perl:tabbedex:prev_tab
+
+URxvt.keysym.Control-Shift-R: perl:tabbedex:rename_tab
+URxvt.keysym.Control-Shift-H: perl:tabbedex:move_tab_left
+URxvt.keysym.Control-Shift-L: perl:tabbedex:move_tab_right
+
+URxvt*tabbed.tabbar-fg: 15
+URxvt*tabbed.tabbar-bg: 236
+URxvt*tabbed.tab-fg: 110
+URxvt*tabbed.tab-bg: 236
+URxvt*tabbed.transparent:true
+URxvt*tabbed.new-button: false
+
+URxvt.letterSpace: -1

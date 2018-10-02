@@ -1,0 +1,21 @@
+# 
+
+# deb cdrom:[Debian GNU/Linux 10.5.0 _Buster_ - Official amd64 xfce-CD Binary-1 20200801-11:35]/ stretch main contrib non-free
+
+#deb cdrom:[Debian GNU/Linux 10.5.0 _Buster_ - Official amd64 xfce-CD Binary-1 20200801-11:35]/ stretch main contrib non-free
+
+deb http://deb.debian.org/debian/ stretch main contrib non-free
+deb-src http://deb.debian.org/debian/ stretch main contrib non-free
+
+deb http://security.debian.org/debian-security stretch/updates main contrib non-free
+deb-src http://security.debian.org/debian-security stretch/updates main contrib non-free
+
+# stretch-updates, previously known as 'volatile'
+deb http://deb.debian.org/debian/ stretch-updates main contrib non-free
+deb-src http://deb.debian.org/debian/ stretch-updates main contrib non-free
+
+# This system was installed using small removable media
+# (e.g. netinst, live or single CD). The matching "deb cdrom"
+# entries were disabled at the end of the installation process.
+# For information about how to configure apt package sources,
+# see the sources.list(5) manual.

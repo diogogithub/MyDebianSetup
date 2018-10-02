@@ -1,0 +1,25 @@
+se vi+=n~/.cache/vim/viminfo
+
+sy on
+se sw=4 ts=8 sts=-1 et nu sc hls title bg=dark swb=useopen
+filet plugin indent on
+
+comp gcc
+au FileType make setl noet sw=8 sts=0
+au FileType yaml setl indk=
+packadd! matchit
+
+au Filetype c nn <buffer> <F9> :!gcc "%" -o "%<" -std=c11 -O2 -g
+    \ -fsanitize=undefined -Wall -Wextra -Wshadow
+    \ -DJOHNCHEN902=1 <CR>
+au Filetype cpp nn <buffer> <F9> :!g++ "%" -o "%<" -std=c++17 -O2 -g
+    \ -fsanitize=undefined -Wall -Wextra -Wshadow
+    \ -DJOHNCHEN902=1 <CR>
+au Filetype haskell nn <buffer> <F9> :!ghc "%" -o "%<" -O -g
+    \ -dynamic -no-keep-hi-files -no-keep-o-files
+    \ -Wall <CR>
+au Filetype rust nn <buffer> <F9> :!rustc "%" -o "%<" -O -g
+    \ -C prefer-dynamic <CR>
+
+au Filetype c,cpp,haskell,rust nn <F5> :!"%:p:r" <CR>
+au Filetype c,cpp,haskell,rust nn <F6> :!"%:p:r" < input.txt<CR>

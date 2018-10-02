@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Package Update Indicator
+GenericName=Package Update Indicator
+Comment=Notify about available software updates
+Icon=system-software-update
+Exec=package-update-indicator
+Terminal=false
+Type=Application
+Categories=Utility;GTK;TrayIcon;
+NotShowIn=GNOME;KDE;
