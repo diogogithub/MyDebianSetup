@@ -1,7 +1,15 @@
-autoload -Uz compinit
-compinit
-# Completion for kitty
-#kitty + complete setup zsh | source /dev/stdin
+#
+# User configuration sourced by interactive shells
+#
+
+setopt LOCAL_OPTIONS          # allow functions to have local options
+setopt LOCAL_TRAPS            # allow functions to have local traps
+setopt CLOBBER
+setopt RM_STAR_SILENT         # dont ask for confirmation in rm globs
+setopt CORRECT                # auto-correct commands
+setopt COMPLETE_IN_WORD       # dont nice background tasks
+setopt PROMPT_SUBST           # expand prompt sequences
+
 #
 # .zshrc is sourced in interactive shells.
 # It should contain commands to set up aliases,
@@ -16,9 +24,6 @@ compinit
 #  terminal's default foreground colour.  Abbreviations
 #  are allowed; b or bl selects black.
 #
-HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=1000
 WORDCHARS="${WORDCHARS:s#/#}"
 WORDCHARS="${WORDCHARS:s#.#}"
 export EDITOR=$(which nvim)
@@ -39,11 +44,11 @@ bindkey "\ee[C" forward-word
 bindkey "\ee[D" backward-word
 #Ctrl-left/right
 bindkey '\e[1;5C' forward-word # ctrl right
-bindkey '\e[1;5D' backward-word # ctrl left o
+bindkey '\e[1;5D' backward-word # ctrl left
 #alt-left/right
 bindkey "\e[1;3C" forward-word
 bindkey "\e[1;3D" backward-word
-#bindkey "^H" backward-delete-word
+bindkey "^H" backward-delete-word
 # for rxvt
 bindkey "\e[8~" end-of-line
 bindkey "\e[7~" beginning-of-line
@@ -56,16 +61,9 @@ bindkey "\e[F" end-of-line
 # completion in the middle of a line
 bindkey '^i' expand-or-complete-prefix
 
-setopt appendhistory autocd nobeep extendedglob nomatch notify
+setopt autocd nobeep extendedglob nomatch notify
 setopt autolist auto_menu
-bindkey -e
-# End of lines configured by zsh-newuser-install
-# The following lines were added by compinstall
-zstyle :compinstall filename '/home/mwoodson/.zshrc'
 
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall
 ## completion system
 _force_rehash() {
       (( CURRENT == 1 )) && rehash
@@ -174,10 +172,12 @@ setopt CORRECT
 ## restart running processes on exit
 #setopt HUP
 
-## history
-#setopt APPEND_HISTORY
-## for sharing history between zsh processes
+# Save all history
+# Incrementally write history to file
 setopt INC_APPEND_HISTORY
+# Save timestamp to history file too
+setopt EXTENDED_HISTORY
+# Import newly written commands from the history file
 setopt SHARE_HISTORY
 
 setopt nonomatch            # do not print error on non matched patterns
@@ -292,6 +292,10 @@ fi
 
 precmd(){
 
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "$(date "+%Y-%m-%d.%H:%M:%S") $(pwd) $(history | tail -n 1)" >>! $HOME/.history/zsh-history-$(date "+%Y-%m-%d").log;
+    fi
+
     local exit_status=$?
 
     vcs_info 'prompt'
@@ -336,24 +340,28 @@ precmd(){
 
 #PROMPT LINE
 #${PR_BRIGHT_YELLOW}%D{%R.%S %a %b %d %Y}${PR_RESET}\
-LINE1_PROMPT="\
-%B%F{black}▶%f%b%F{red}▶%B%F{red}▶%f%b \
-%B%F{$HASH_MOD}%D{%R.%S %a %b %d %Y}%b%f\
-${EXIT_STATUS}\
-%(1j. %B%F{green}◆%f%b %B%F{yellow}Jobs: %j%f%b.)\
-${PR_BATTERY}\
- %B%F{red}◀%f%b%F{red}◀%B%F{black}◀%f%b"
+
+#LINE1_PROMPT="\
+#%B%F{black}▶%f%b%F{red}▶%B%F{red}▶%f%b \
+#%B%F{$HASH_MOD}%D{%R.%S %a %b %d %Y}%b%f\
+#${EXIT_STATUS}\
+#%(1j. %B%F{green}◆%f%b %B%F{yellow}Jobs: %j%f%b.)\
+#${PR_BATTERY}\
+# %B%F{red}◀%f%b%F{red}◀%B%F{black}◀%f%b"
 ###################
 
 local TERMWIDTH
 (( TERMWIDTH = ${COLUMNS} - 2 ))
-LINE1=${(e%)LINE1_PROMPT} SSH_P=${(e%)SSH_PROMPT}
+#LINE1=${(e%)LINE1_PROMPT} SSH_P=${(e%)SSH_PROMPT}
+LINE1=SSH_P=${(e%)SSH_PROMPT}
 #$LINE1
-LINE1_LENGTH=${#${LINE1//\[[^m]##m/}}
+#LINE1_LENGTH=${#${LINE1//\[[^m]##m/}}
 SSH_P_LENGTH=${#${SSH_P//\[[^m]##m/}}
-FILL_SPACES=${(l:TERMWIDTH - (LINE1_LENGTH + SSH_P_LENGTH):: :)}
+#FILL_SPACES=${(l:TERMWIDTH - (LINE1_LENGTH + SSH_P_LENGTH):: :)}
+FILL_SPACES=${(l:TERMWIDTH - (SSH_P_LENGTH):: :)}
 
-print -- "$LINE1 $FILL_SPACES $SSH_P"
+#print -- "$LINE1 $FILL_SPACES $SSH_P"
+print -- "$FILL_SPACES $SSH_P"
 }
 
 PROMPT='${PROMPT_LINE}%B%F{green}:%f%b${PR_PWDCOLOR}%~${PR_RESET}${vcs_info_msg_0_}%(!.%B%F{red}%#%f%b.%B%F{green}➤%f%b) '
@@ -385,8 +393,6 @@ fi
 #  [[ ! $TERM =~ screen ]] && [ -z $TMUX ] && exec tmux
 #fi
 
-# Enable Ctrl-x-e to edit command line
-autoload -U edit-command-line
 # Emacs style
 #zle -N edit-command-line
 #bindkey '^xe' edit-command-line
