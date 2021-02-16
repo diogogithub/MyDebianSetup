@@ -144,7 +144,7 @@ Proper network manager with VPN support
 
 ## Shell
 
-* `sudo aptitude install kitty ripgrep zsh shellcheck`
+* `sudo aptitude install kitty ripgrep zsh shellcheck fzf silversearcher-ag bat`
 * `stow kitty shell tmux`
 
 * `chsh -s $(which zsh)`
