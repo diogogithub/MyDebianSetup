@@ -376,6 +376,11 @@ then
 	    PATH="$HOME/.local/bin:$PATH"
 fi
 
+if [ -d "$HOME/.local/bin" ]
+then
+	    PATH="$HOME/.cargo/bin:$PATH"
+fi
+
 # Make CTRL+S work
 stty -ixon
 
